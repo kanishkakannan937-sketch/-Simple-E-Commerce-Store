@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Details</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <h1>Product Details</h1>
+
+    <div id="product-details"></div>
+
+    <script>
+        const API_URL = "http://127.0.0.1:5000/api/products";
+
+        let currentProduct = null;
+
+        async function loadProduct() {
+            const params = new URLSearchParams(window.location.search);
+            const productId = params.get("id");
+
+            if (!productId) {
+                document.getElementById("product-details").innerHTML =
+                    "<p>Product ID not found.</p>";
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/${productId}`);
+                const product = await response.json();
+
+                currentProduct = product;
+
+                document.getElementById("product-details").innerHTML = `
+                    <img src="${product.image}" 
+                         alt="${product.name}" 
+                         width="300">
+
+                    <h2>${product.name}</h2>
+
+                    <p>${product.description}</p>
+
+                    <h3>₹${product.price}</h3>
+
+                    <p>Category: ${product.category}</p>
+
+                    ${product.stock > 0
+                       ? `<button onclick="addToCart('${product._id}')">
+                              Add to Cart
+                            </button>`
+                       : `<button disabled>
+                              Out of Stock
+                            </button>`
+                    }
+
+                    <br><br>
+
+                    <button onclick="goToCart()">
+                        Go to Cart
+                    </button>
+                `;
+
+            } catch (error) {
+                console.error("Error:", error);
+            }
+        }
+
+        function addToCart(productId) {
+            let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+            const existingProduct = cart.find(
+                item => item.product === productId
+            );
+
+            if (existingProduct) {
+                existingProduct.quantity += 1;
+            } else {
+                cart.push({
+                    product: currentProduct._id,
+                    name: currentProduct.name,
+                    price: currentProduct.price,
+                    image: currentProduct.image,
+                    stock: currentProduct.stock,
+                    quantity: 1
+                });
+            }
+
+            localStorage.setItem("cart", JSON.stringify(cart));
+
+            alert("Product added to cart!");
+        }
+
+        function goToCart() {
+            window.location.href = "cart.html";
+        }
+
+        loadProduct();
+    </script>
+
+</body>
+</html>

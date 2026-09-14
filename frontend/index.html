@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Commerce Store</title>
+    <link rel="stylesheet" href="css\style.css">
+</head>
+
+<body>
+
+    <nav>
+        <a href="index.html">Home</a>
+        |
+        <a href="cart.html">Cart 🛒</a>
+        |
+        <a href="orders.html">My Orders 📦</a>
+        |
+        <a href="login.html">Login</a>
+        |
+        <a href="register.html">Register</a>
+    </nav>
+
+    <div id="user-section"></div>
+
+
+    <section class="hero">
+    <h1>Welcome to My E-Commerce Store 🛍️</h1>
+    <p>Discover quality products at great prices.</p>
+    </section>
+    
+    <div id="user-section"></div>
+
+    <div id="filter-section">
+
+    <input
+        type="text"
+        id="search-input"
+        placeholder="Search products..."
+    >
+
+    <select id="category-filter">
+        <option value="all">All Categories</option>
+    </select>
+
+</div>
+
+    <div id="product-container"></div>
+
+    <script>
+    const user = JSON.parse(localStorage.getItem("user"));
+
+    const userSection = document.getElementById("user-section");
+
+    if (user) {
+        userSection.innerHTML = `
+            <p>Welcome, ${user.name} 👋</p>
+            <button onclick="logout()">Logout</button>
+        `;
+    } else {
+        userSection.innerHTML = `
+            <a href="login.html">Login</a>
+            |
+            <a href="register.html">Register</a>
+        `;
+    }
+
+    function logout() {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+
+        alert("Logged out successfully!");
+
+        window.location.href = "login.html";
+    }
+    </script>
+
+    <script src="js\product.js"></script>
+
+</body>
+</html>

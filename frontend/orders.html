@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Orders</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    
+    <nav>
+    <a href="index.html">Home</a>
+    |
+    <a href="cart.html">Cart 🛒</a>
+    </nav>
+    <h1>My Orders 📦</h1>
+
+    <div id="orders-container">
+        <p>Loading orders...</p>
+    </div>
+
+    <script>
+        const API_URL = "http://127.0.0.1:5000/api/orders/my-orders";
+
+        const user = JSON.parse(localStorage.getItem("user"));
+
+        async function loadOrders() {
+
+            if (!user) {
+                alert("Please login first.");
+                window.location.href = "login.html";
+                return;
+            }
+
+            try {
+
+                const token = localStorage.getItem("token");
+
+                const response = await fetch(API_URL, {
+                   headers: {
+                       "Authorization": `Bearer ${token}`
+                    }
+                });
+                const orders = await response.json();
+
+                const myOrders = orders;
+
+                const container =
+                    document.getElementById("orders-container");
+
+                if (myOrders.length === 0) {
+                    container.innerHTML =
+                        "<p>No orders found.</p>";
+                    return;
+                }
+
+                container.innerHTML = "";
+
+                myOrders.forEach(order => {
+
+                    container.innerHTML += `
+                        <div>
+                            <h3>Order ID: ${order._id}</h3>
+
+                            <p>
+                                Status: <strong>${order.status}</strong>
+                            </p>
+
+                            <p>
+                                Total: ₹${order.totalAmount}
+                            </p>
+
+                            <p>
+                                Shipping Address:
+                                ${order.shippingAddress.address},
+                                ${order.shippingAddress.city} -
+                                ${order.shippingAddress.pincode}
+                            </p>
+
+                            <h4>Items:</h4>
+
+                            ${order.items.map(item => `
+                                <p>
+                                    ${item.product.name}
+                                    × ${item.quantity}
+                                    = ₹${item.price * item.quantity}
+                                </p>
+                            `).join("")}
+
+                            <hr>
+                        </div>
+                    `;
+                });
+
+            } catch (error) {
+
+                console.error("Order Error:", error);
+
+                document.getElementById("orders-container")
+                    .innerHTML =
+                    "<p>Failed to load orders.</p>";
+            }
+        }
+
+        loadOrders();
+    </script>
+
+</body>
+</html>

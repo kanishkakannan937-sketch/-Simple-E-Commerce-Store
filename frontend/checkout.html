@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <script>
+    const checkoutToken = localStorage.getItem("token");
+
+    if (!checkoutToken) {
+        alert("Please login before checkout.");
+        window.location.href = "login.html";
+    }
+    </script>
+
+    <h1>Checkout</h1>
+
+    <div id="order-summary"></div>
+
+    <h2>Shipping Address</h2>
+
+    <form id="checkout-form">
+
+        <label>Address:</label><br>
+        <input type="text" id="address" required>
+        <br><br>
+
+        <label>City:</label><br>
+        <input type="text" id="city" required>
+        <br><br>
+
+        <label>Pincode:</label><br>
+        <input type="text" id="pincode" required>
+        <br><br>
+
+        <button type="submit">Place Order</button>
+
+    </form>
+
+    <script>
+        const API_URL = "http://127.0.0.1:5000/api/orders";
+
+
+        function getCart() {
+            return JSON.parse(localStorage.getItem("cart")) || [];
+        }
+
+        function displayOrderSummary() {
+
+            const cart = getCart();
+            const summary = document.getElementById("order-summary");
+
+            if (cart.length === 0) {
+                summary.innerHTML = "<p>Your cart is empty.</p>";
+                return;
+            }
+
+            let total = 0;
+
+            summary.innerHTML = "<h2>Order Summary</h2>";
+
+            cart.forEach(item => {
+
+                const itemTotal = item.price * item.quantity;
+                total += itemTotal;
+
+                summary.innerHTML += `
+                    <p>
+                        ${item.name} × ${item.quantity}
+                        = ₹${itemTotal}
+                    </p>
+                `;
+            });
+
+            summary.innerHTML += `
+                <h3>Total: ₹${total}</h3>
+            `;
+        }
+
+        document.getElementById("checkout-form")
+            .addEventListener("submit", async function(event) {
+
+                event.preventDefault();
+
+                const cart = getCart();
+
+                if (cart.length === 0) {
+                    alert("Your cart is empty!");
+                    return;
+                }
+
+                let totalAmount = 0;
+
+                const items = cart.map(item => {
+
+                    totalAmount += item.price * item.quantity;
+
+                    return {
+                        product: item.product,
+                        quantity: item.quantity,
+                        price: item.price
+                    };
+                });
+
+                const user = JSON.parse(localStorage.getItem("user"));
+
+                if (!user) {
+                     alert("Please login before placing an order.");
+                     window.location.href = "login.html";
+                     return;
+                }
+                const orderData = {
+
+
+                    user: user.id,
+
+                    items: items,
+
+                    totalAmount: totalAmount,
+
+                    shippingAddress: {
+                        address: document.getElementById("address").value,
+                        city: document.getElementById("city").value,
+                        pincode: document.getElementById("pincode").value
+                    }
+                };
+
+                try {
+                    
+                    const token = localStorage.getItem("token");
+                    const response = await fetch(API_URL, {
+
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Authorization": `Bearer ${token}`
+                        },
+
+                        body: JSON.stringify(orderData)
+                    });
+
+                    const data = await response.json();
+
+                    if (!response.ok) {
+                        throw new Error(data.error || "Order failed");
+                    }
+
+                    alert("Order placed successfully! 🎉");
+
+                    localStorage.removeItem("cart");
+
+                    window.location.href = "index.html";
+
+                } catch (error) {
+
+                    console.error("Order Error:", error);
+
+                    alert("Failed to place order");
+                }
+            });
+
+        displayOrderSummary();
+    </script>
+
+</body>
+</html>
