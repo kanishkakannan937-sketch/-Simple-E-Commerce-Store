@@ -1,10 +1,10 @@
-const API_URL = "http://127.0.0.1:5000/api/products";
+const API_URL = "https://simple-ecommerce-store-c40b.onrender.com/api/products";
 
 let allProducts = [];
 
 async function loadProducts() {
     try {
-        const response = await fetch("http://localhost:5000/api/products");
+        const response = await fetch(API_URL);
 
         const data = await response.json();
 
