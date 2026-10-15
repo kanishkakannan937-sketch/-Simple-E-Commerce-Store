@@ -557,3 +557,55 @@ form a {
         transition-duration: 0.01ms !important;
     }
 }
+
+/* Cart Product Name */
+#cart-container h3 {
+    color: #292454;
+    font-size: 22px;
+    font-weight: 800;
+}
+
+/* Cart Price — Highly Visible */
+#cart-container p {
+    color: #202641;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+/* Price and Total Amount */
+#cart-total {
+    color: #00a878;
+    font-size: 30px;
+    font-weight: 900;
+    text-shadow: none;
+}
+
+/* Quantity Controls */
+#cart-container span {
+    color: #292454;
+    font-size: 20px;
+    font-weight: 800;
+}
+
+/* Buttons */
+#cart-container button {
+    color: #ffffff;
+    background: linear-gradient(135deg, #6c5ce7, #5141b7);
+    font-weight: 800;
+}
+
+/* Product Details Price */
+#product-details h3 {
+    color: #00875a;
+    font-size: 28px;
+    font-weight: 900;
+}
+
+/* Checkout Price */
+#order-summary p,
+#order-summary h3 {
+    color: #202641;
+    font-size: 19px;
+    font-weight: 800;
+}
+
