@@ -23,7 +23,7 @@ body {
     margin: 0;
     padding: 25px;
     font-family: "Segoe UI", Arial, sans-serif;
-    color: var(--text);
+    color:#f1f5ff;
     line-height: 1.6;
     background:
         radial-gradient(circle at 5% 5%, #e0dcff 0, transparent 30%),
